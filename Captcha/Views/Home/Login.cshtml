@@ -1,0 +1,159 @@
+﻿@model LoginVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <style>
+        #recaptcha {
+            width: 190px !important;
+            height: 35px;
+            margin-top: 12px;
+            padding-left: 6px;
+            padding: 0;
+            text-align: center;
+        }
+
+        #modelLogin {
+            margin-top: 100px;
+        }
+    </style>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/bootstrap-sweetalert/sweetalert.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+        <center>
+            <div class="col-lg-6 align-items-center">
+                <div class="modal-content" id="modelLogin">
+                    <div class="modal-body">
+                        <div class="form-title text-center">
+                            <h4>Login</h4>
+                        </div>
+                        <form asp-controller="Home" asp-action="Login" id="formLogin" class="form-horizontal" role="form" method="post" data-toggle="validator">
+                            <div class="form-group has-feedback">
+                                <div class="col-sm-12">
+                                    <input asp-for="Username" class="form-control" id="Username" name="Username" placeholder="Enter your username" value="@ViewBag.Username" required>
+                                    <span asp-validation-for="Username" class="text-danger" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <div class="col-sm-12">
+                                    <input asp-for="Password" class="form-control" id="Password" name="Password" placeholder="Enter your password" type="password" value="@ViewBag.Password" required>
+                                    <span asp-validation-for="Password" class="text-danger" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom:15px;">
+                                <div class="col-sm-12">
+                                    <label class="checkbox mbui-checkbox-custom float-lg-left">
+                                        <input checked="" type="checkbox"><i></i>
+                                        Remember Me
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom:15px;">
+                                <div class="col-sm-12"></div>
+                                <div className="col-sm-8" style="margin-top:50px;">
+                                    <canvas id="myCaptchaCanvas" width="250" height="100" style="border:1px solid #d3d3d3;">
+                                    </canvas>
+                                </div>
+                                <div class="col-sm-8">
+                                    <small>* Enter the security code in the image.</small>
+                                    <div className="col-md-6 form-field m-1 p-2">
+                                        <input class="formGrup input" className="form-control-lg " name="recaptcha" id="recaptcha" />
+                                    </div>
+                                    <input hidden asp-for="CaptchaCheck" id="CaptchaCheck" name="CaptchaCheck" type="text" value="False">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <button type="submit" class="btn btn-info btn-block btn-round" onclick="checkCapcha()">Login</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </center>
+    </div>
+
+    <center>
+        <footer>
+            Copyright &copy; 2021
+
+            - Captcha - Design By Ali: <a href="https://www.linkedin.com/in/ali-cicekk/" rel="sponsored" target="_blank" title="css templates">LinkedIn</a>
+        </footer>
+    </center>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="~/bootstrap-sweetalert/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("#Username").focus();
+        @(!String.IsNullOrEmpty(TempData["Alert"].ToString()) ? Html.Raw(TempData["Alert"].ToString()) : Html.Raw(""))
+            @if (true)
+            {
+                var a = TempData["Alert"].ToString();
+            }
+        });
+
+        function randomNumberGenerator(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        var rnd = Math.random().toString(36).substr(2, 5).toUpperCase();
+
+        var c = document.getElementById("myCaptchaCanvas");
+        var ctx = c.getContext("2d");
+        make_base();
+
+        function make_base() {
+            base_image = new Image();
+            base_image.src = '/Uploads/captcha-bg.png';
+            base_image.onload = () => {
+                ctx.drawImage(base_image, 0, 0);
+                ctx.lineWidth = 1.25;
+                ctx.font = "50px Arial";
+                ctx.strokeText(rnd[0], 20, randomNumberGenerator(37, 90));
+                ctx.strokeText(rnd[1], 65, randomNumberGenerator(37, 90));
+                ctx.strokeText(rnd[2], 115, 70);
+                ctx.strokeText(rnd[3], 150, randomNumberGenerator(37, 90));
+                ctx.strokeText(rnd[4], 200, randomNumberGenerator(37, 90));
+                ctx.lineWidth = 5;
+                ctx.moveTo(0, 0);
+                ctx.lineTo(250, 100);
+                ctx.stroke();
+            }
+        }
+
+        function checkCapcha() {
+            if (document.getElementById("recaptcha").value != rnd) {
+                document.getElementById("CaptchaCheck").value = "False";
+            }
+            else
+                document.getElementById("CaptchaCheck").value = "True";
+        }
+
+        function swAlert(title, text, icon) {
+            swal({
+                title: title,
+                text: text,
+                icon: icon
+            });
+        }
+
+    </script>
+
+</body>
+</html>
